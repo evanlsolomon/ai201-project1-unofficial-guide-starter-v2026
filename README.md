@@ -183,18 +183,25 @@ would watch first if the system starts refusing things it shouldn't.
 
 ## How I Used AI
 
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
 
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
 
 **1.**
+**1. The chunker, and a floor that was set too high.**
 
-**2.**
+I described my corpus and asked Claude to write a chunking strategy that fit
+it, rather than the starter's 800-character windows. What came back was
+section-based splitting — one `##` section per chunk, with the document's `#`
+title pasted on top of each one — plus a floor that merged any section under
+250 characters into its neighbour.
+
+The title-repeating part I kept, because it solves a problem I'd already
+spotted when I read my documents: all ten town guides use identical headings,
+so a bare "Getting around" chunk doesn't say which town it's about.
+
+**2. Criterion 4, which I sent back.**
+
+I asked Claude to review my report and make sure I answered all the questions.
+I removed the parts that were overly verbose.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
