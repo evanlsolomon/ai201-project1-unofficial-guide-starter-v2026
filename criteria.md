@@ -69,15 +69,24 @@ in at least 4 of 5 tries.
        - "No chunk is shorter than 200 characters, since anything below that
           in my corpus turned out to be a heading with no content under it." -->
 
-
+When I print 5 chunks at random, at least 4 of them tells me which town it's about
+without me having to look at the chunk before or after it.
 
 **Why this target:**
+All ten of my town guides use the exact same headings, so a "Getting around"
+chunk on its own just says "the town is walkable end to end in about 35
+minutes" and I can't tell if that's Brightwater or Thornby Wells. If I can't
+tell, I don't think the search can either.
 
-
+I said 4 of 5 rather than all 5 because a couple of my documents aren't town
+guides at all — the seasons one and the accessibility one are organized by
+topic and jump between towns inside a single section, so I expect those to be
+harder to cut cleanly. I'd rather find that out than write a target I already
+know I'll hit.
 
 ---
 
-## 5. Your choice
+## 5. Answers don't mix up my towns
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -88,10 +97,21 @@ in at least 4 of 5 tries.
      outcome. -->
 
 
+For all 5 of my test questions, the facts in the answer are about the town I
+actually asked about, and the file it names really does contain that fact
+(I check by opening the file and searching for it).
 
 **Why this target:**
+My corpus is ten towns written up the same way with a lot of the same words, so
+I think the mistake I'm most likely to get isn't a made-up answer — it's a true
+sentence about the wrong town. Thornby Wells has free two-hour parking and
+Halden Bay has a parking problem, and those chunks probably look pretty similar
+to a search.
 
-
+I went with 5 of 5 instead of 4 of 5 because a wrong-town answer seems worse to
+me than the system refusing to answer. If it refuses I know something went
+wrong. If it confidently tells me the wrong town's parking rules, I'd just
+believe it.
 
 ---
 
