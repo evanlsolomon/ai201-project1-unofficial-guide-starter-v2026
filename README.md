@@ -128,31 +128,58 @@ a minor injuries unit locally with limited hours.
 ```
 
 ## Sample Answer
-
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
 **Question:**
-
+"What are the three least approachable towns from an accessibility standpoint?"
+  
 **Answer:**
 
 ```
+(best distance 0.559, cutoff 0.6)
+
+Based on the documents, the three towns listed as difficult for limited mobility are **Kestrelford**, **Halden Bay**, and **Corry Vale** (along with **Elder Ness**, which is also listed in the same difficult section).
+
+Source: `guide_accessibility.md`
+
+Sources retrieved: guide_accessibility.md, guide_givens_mill.md, guide_kestrelford.md, guide_walking.md
 ```
 
 **My relevance cutoff:**
 
-<!-- The number you set in config.py, and how you got there.
+**Why 0.6 and not something else.** The gap is wide enough that anything from
+roughly 0.60 to 0.80 gives the same result on these ten questions: all five
+in-corpus answered, all five out-of-scope refused. Since a whole range works
+equally well on my test set, I kept 0.6 rather than moving it for no measurable
+reason. I put it at the low end of the workable range on purpose — I'd rather
+the system refuse a question it could have answered than answer one it
+couldn't, because a refusal is visible and a wrong answer isn't.
 
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
+**What I'd get wrong at this number.** I found this by accident. The first time
+I asked my Sunday-evening question I pasted it with the quotation marks still
+around it, and the identical question scored **0.642** instead of 0.552 — over
+the cutoff, and refused. So the gap isn't as empty as the table makes it look:
+a question that's worded awkwardly, or that carries stray punctuation, can land
+in the middle of it. At 0.6 that gets refused. Raising the cutoff to 0.7 would
+have caught it and still refused all five out-of-scope questions, which is the
+argument for going higher. I stayed at 0.6 because the failure I saw was a
+formatting mistake on my part rather than a real question, but it's the thing I
+would watch first if the system starts refusing things it shouldn't.
 
-     Milestone 4. -->
-
-| Question | In corpus? | Best distance |
+| In-corpus question | Best distance | Gate |
 |---|---|---|
-|  |  |  |
+| Sunday evening walk + meal | 0.552 | pass |
+| Best Saturday market, when established | 0.360 | pass |
+| Two best seasons to visit | 0.417 | pass |
+| Easiest town for walking | 0.524 | pass |
+| Three least accessible towns | 0.559 | pass |
+
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| Capital of Mongolia | 0.811 | refuse |
+| Changing diesel engine oil | 0.888 | refuse |
+| 1994 World Cup | 0.964 | refuse |
+| Ibuprofen dosage | 0.835 | refuse |
+| For loop in Rust | 0.836 | refuse |
 
 ## How I Used AI
 
