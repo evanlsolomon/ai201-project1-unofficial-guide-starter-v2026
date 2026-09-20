@@ -29,18 +29,35 @@
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** no fixed size. One `##` section = one chunk, with a 900-character
+ceiling and a 150-character floor.
+**Overlap:** none between sections. One sentence of overlap only when a single
+section runs past 900 characters and has to be split.
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+The starter cut at 800 characters and gave me 51 chunks from 14 documents,
+averaging 650 characters, with the shortest at 24 — the leftover tail of a
+document that didn't divide evenly. It also sliced straight through my labelled
+sections, so "Where to stay" ended up glued to the back half of "What to see".
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
+My documents are markdown guides with a `# Town` title and seven `## ` sections
+under it. A section is already the unit my questions map to — "what's parking
+like in Halden Bay" is one section, not half of two — so I split there instead
+of at a character count. Overlap between sections is zero on purpose: the
+sections are about genuinely different things, and carrying the tail of "Eat and
+drink" into "What to see" would just add noise.
 
-     Milestone 3. -->
+The part that isn't obvious from the file: every chunk gets the document's `#`
+title pasted back on top. All ten town guides use the same seven headings, so a
+"Getting around" chunk on its own reads "flat and compact — 15 minutes end to
+end" with nothing in it to say which of ten towns that is. The title costs about
+15 characters per chunk and is what makes them answerable alone.
+
+**I changed my mind partway through.** I set the merge floor at 250 characters
+first, figuring anything shorter was too thin to stand alone. That merged 25
+sections, including "Getting around" into "Eat and drink" — exactly the
+multi-topic chunk I was trying to avoid. At 150 only one section in the corpus
+merges (the accessibility guide's two-line preamble). The sections were already
+the right size; I'd set the floor above them.
 
 ## Sample Chunks
 
@@ -53,29 +70,61 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: guide_accessibility.md#0 `` — produced by: chunker.py::split_documents``
 
 ```
+# Getting around the region with limited mobility
+## Overview / Straightforward
+An honest assessment rather than a promotional one. Some of these places are
+difficult and it is better to know in advance.
+
+**Thornby Wells** is the easiest town in the region. It is flat, compact, and
+everything is within three minutes of everything else. Parking is free for two
+hours anywhere in town and the station is central. The pump room and gardens
+are level throughout.
+
+**Marchwood** has a modern tram network with level boarding on all four lines,
+running every 8 minutes on weekdays. The city museum and covered market are both
+step-free. The distances between districts are the main consideration.
+
+**Brightwater** is level along the river and through the centre. The mill museum
+is step-free. The station is a 15-minute walk from campus on flat ground, or the
+shuttle meets the four busiest arrivals.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: guide_corry_vale.md#6 `` — produced by: chunker.py::split_documents``
 
 ```
+# Corry Vale
+## When to go
+May to September. Outside those months the pub in the third village closes, the farm shop reduces its hours, and several footpaths become genuinely boggy rather than merely wet. The road is not gritted above the second village and is impassable in snow.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: guide_givens_mill.md#3 `` — produced by: chunker.py::split_documents``
 
 ```
+# Givens Mill
+## Eat and drink
+A tearoom attached to the mill, open 10 to 4 daily except Tuesdays, which sells bread made from the flour ground twenty metres away and is the reason most people come. One pub, food served lunchtimes and Thursday to Saturday evenings.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: guide_kestrelford.md#5 `` — produced by: chunker.py::split_documents``
 
 ```
+# Kestrelford
+## Where to stay
+Two inns on the square and a handful of rooms above the pubs. Booking ahead matters between May and September and not at all otherwise. There is no accommodation of any kind within four miles of the town in either direction.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: guide_pellew_sands.md#7 `` — produced by: chunker.py::split_documents ``
 
 ```
+# Pellew Sands
+## Practical notes
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
 ```
 
 ## Sample Answer

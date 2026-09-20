@@ -22,10 +22,22 @@ to it, write down what you saw, and move on. That's a real observation about
 your pipeline, not giving up.
 """
 
+import re
 from dataclasses import dataclass
 
 import config
 from ingest import Document
+
+
+# ─── Milestone 3 settings ────────────────────────────────────────────────────
+# My corpus is 14 markdown guides, each with a `# Town` title and a handful of
+# `## Section` headings under it. A section is already the unit a question maps
+# to, so these are guard rails for the odd section that runs long or short,
+# not a window size.
+
+MAX_CHUNK = 900     # split a section that runs past this, at a paragraph break
+MIN_CHUNK = 150     # a piece this short gets merged into the next one
+SENTENCE_OVERLAP = 1  # sentences carried over when one section has to be split
 
 
 @dataclass
@@ -80,24 +92,153 @@ def fallback_split(
     return chunks
 
 
+# ─── Helpers for my strategy ─────────────────────────────────────────────────
+
+
+def _split_sections(text: str) -> tuple[str, list[tuple[str, str]]]:
+    """
+    Pull a document apart at its `##` headings.
+
+    Returns the title line (the `#` heading, without the hash) and a list of
+    (heading, body) pairs. Anything before the first `##` — the opening
+    paragraph most of my guides have — comes back as a section with the
+    heading "Overview", because it is real content and it would otherwise be
+    thrown away.
+    """
+    lines = text.split("\n")
+
+    title = ""
+    start = 0
+    for i, line in enumerate(lines):
+        if line.startswith("# "):
+            title = line[2:].strip()
+            start = i + 1
+            break
+
+    sections: list[tuple[str, str]] = []
+    heading = "Overview"
+    body: list[str] = []
+
+    for line in lines[start:]:
+        if line.startswith("## "):
+            if "\n".join(body).strip():
+                sections.append((heading, "\n".join(body).strip()))
+            heading = line[3:].strip()
+            body = []
+        else:
+            body.append(line)
+
+    if "\n".join(body).strip():
+        sections.append((heading, "\n".join(body).strip()))
+
+    return title, sections
+
+
+def _sentences(text: str) -> list[str]:
+    """Rough sentence split — good enough for prose guides."""
+    parts = re.split(r"(?<=[.!?])\s+", text)
+    return [p for p in parts if p.strip()]
+
+
+def _split_long_body(body: str, budget: int) -> list[str]:
+    """
+    Break a section that runs past the budget, preferring paragraph breaks and
+    falling back to sentence breaks. Carries `SENTENCE_OVERLAP` sentences from
+    the end of one piece to the start of the next so a split paragraph keeps
+    its thread.
+    """
+    if len(body) <= budget:
+        return [body]
+
+    units = [p.strip() for p in body.split("\n\n") if p.strip()]
+    if len(units) == 1:
+        units = _sentences(body)
+
+    pieces: list[str] = []
+    current: list[str] = []
+
+    for unit in units:
+        candidate = current + [unit]
+        if current and len("\n\n".join(candidate)) > budget:
+            pieces.append("\n\n".join(current))
+            tail = _sentences("\n\n".join(current))[-SENTENCE_OVERLAP:]
+            current = tail + [unit]
+        else:
+            current = candidate
+
+    if current:
+        pieces.append("\n\n".join(current))
+
+    return pieces
+
+
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
+    Split each guide at its `##` headings, one chunk per section.
 
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
+    Every chunk is rebuilt as:
 
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
+        # Town name
+        ## Section heading
 
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+        body text
+
+    The title line is repeated into every chunk on purpose. All ten of my town
+    guides use the same seven headings, so a bare "Getting around" section
+    reads "the town is walkable end to end in about 35 minutes" with nothing in
+    it to say which town that is. Repeating the title costs about 15 characters
+    and is what makes a chunk answerable on its own.
+
+    Sections longer than MAX_CHUNK are split at paragraph breaks with one
+    sentence of overlap; sections shorter than MIN_CHUNK are merged into the
+    next one so I don't get a heading with a single line under it.
     """
-    return fallback_split(documents)
+    chunks: list[Chunk] = []
+
+    for doc in documents:
+        title, sections = _split_sections(doc.text)
+        header = f"# {title}" if title else ""
+
+        # Merge sections that are too thin to stand alone into the next one.
+        merged: list[tuple[str, str]] = []
+        carry: tuple[str, str] | None = None
+
+        for heading, body in sections:
+            if carry:
+                heading = f"{carry[0]} / {heading}"
+                body = f"{carry[1]}\n\n{body}"
+                carry = None
+            if len(body) < MIN_CHUNK:
+                carry = (heading, body)
+            else:
+                merged.append((heading, body))
+
+        if carry:
+            if merged:
+                last_heading, last_body = merged[-1]
+                merged[-1] = (
+                    f"{last_heading} / {carry[0]}",
+                    f"{last_body}\n\n{carry[1]}",
+                )
+            else:
+                merged.append(carry)
+
+        index = 0
+        for heading, body in merged:
+            for piece in _split_long_body(body, MAX_CHUNK):
+                parts = [p for p in (header, f"## {heading}", "", piece) if p != ""]
+                text = "\n".join(parts).strip()
+                chunks.append(
+                    Chunk(
+                        text=text,
+                        source=doc.source,
+                        index=index,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+                index += 1
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:
