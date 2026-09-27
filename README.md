@@ -366,11 +366,11 @@ fact to. I also wrote down how to score answers that list their sources.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | each text contains an answer that shows up in expected.
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | all the answers can be traced back to their source documents
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | irrelevant questions are denied, rather than guessed at
+| 4. Chunks reference towns  | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | when sampling chunks, there is a town name inside each chunk
+| 5. Answers can be looked up in the provided source  | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | the provided fact was verified in the source document.
 
 **Did it help?**
 
@@ -380,6 +380,8 @@ fact to. I also wrote down how to score answers that list their sources.
      tell.
 
      Milestone 4. -->
+
+The revised criteria helped clarify with evalating MET vs. MISSED.
 
 ## What's Still Broken
 
@@ -391,9 +393,14 @@ fact to. I also wrote down how to score answers that list their sources.
 
      Milestone 5. -->
 
+The scorer could be more sophisticated and test more of the criterion. 
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
      Milestone 5. -->
+
+I made the desired changes to the criteria in this unit. Criteria 5 was ambiguous 
+about how it would be evaluated--the revision clears that up.
