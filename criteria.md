@@ -113,6 +113,24 @@ me than the system refusing to answer. If it refuses I know something went
 wrong. If it confidently tells me the wrong town's parking rules, I'd just
 believe it.
 
+> **Revised in unit 2:** For all 5 of my test questions, every fact in the
+> answer passes two checks:
+>
+> 1. **Right town.** If the fact is about a town, the cited file says it about that
+>    same town, not a different one.
+> 2. **Right file.** I can find the fact by opening a file the answer cites
+>    for it and searching. Any one of the listed files counts.
+>
+> **Why revised:** The original says "the town I actually asked about," but
+> none of my five questions names a town. Every one asks the system to pick a
+> town ("which town is the easiest for walking?") or asks about the whole
+> region, so the first half had nothing to compare the answer against and
+> there was no way to score it the same way twice. What I'm worried about
+> hasn't changed: a true sentence about the wrong town. So the check now
+> compares the town in the answer with the town the source file gives that
+> fact to. I also wrote down how to score answers that list their sources at
+> the end, since several of mine do. The target stays at 5 of 5.
+
 ---
 
 <!-- ─────────────────────────────────────────────────────────────────────────

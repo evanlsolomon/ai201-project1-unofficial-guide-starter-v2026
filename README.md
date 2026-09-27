@@ -230,15 +230,73 @@ I removed the parts that were overly verbose.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | each text contains an answer that shows up in expected.
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | all the answers can be traced back to their source documents
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | irrelevant questions are denied, rather than guessed at
+| 4. Chunks reference towns  | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | when sampling chunks, there is a town name inside each chunk
+| 5. Answers don't confuse towns (i.e. no hallucinations or conflating facts) | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | wrong answers are not included with a correct answer.
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
      Name the file and function that produced it. -->
+
+
+## Real output
+
+This is what the system actually produced. Paste the relevant parts
+into your README underneath the table — the rubric asks for real
+output as text, not a description of it.
+
+### If I wanted to go for an easy walk and a meal on a Sunday evening somewhere in the region, where should I look? — run 1
+
+- Best distance: 0.5520 (passed the gate)
+- Sources retrieved: guide_corry_vale.md, guide_eating.md, guide_kestrelford.md, guide_pellew_sands.md
+
+```
+Based on the documents, Marchwood and Thornby Wells are the best places to look for a meal on a Sunday evening. (Source: guide_eating.md)
+```
+
+### Which city has the best Saturday market, and when was it established? — run 1
+
+- Best distance: 0.3596 (passed the gate)
+- Sources retrieved: guide_brightwater.md, guide_eating.md, guide_kestrelford.md
+
+```
+Kestrelford has the region's best Saturday market, which has run since the 1400s. 
+
+Sources: `guide_eating.md` and `guide_kestrelford.md`
+```
+
+### When are the two best seasons or months to visit the region? — run 1
+
+- Best distance: 0.4175 (passed the gate)
+- Sources retrieved: guide_halden_bay.md, guide_marchwood.md, guide_seasons.md, guide_thornby_wells.md
+
+```
+Based on the provided documents, June and September are noted as the "sweet spot" for Halden Bay (`guide_halden_bay.md`), and September is also highlighted as "the other sweet spot" for the region overall (`guide_seasons.md`). Additionally, May and June are the best months for the gardens at Thornby Wells (`guide_thornby_wells.md`), and late May is described as arguably the best week of the year in Brightwater (`guide_seasons.md`).
+```
+
+
+### Which town is the easiest for walking? — run 1
+
+- Best distance: 0.5238 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_corry_vale.md, guide_regional_transport.md, guide_walking.md
+
+```
+**Thornby Wells** is described as the region's most accessible town on foot (from `guide_walking.md`) and the easiest town in the region (from `guide_accessibility.md`).
+```
+
+
+### What are the three least approachable towns from an accessibility standpoint? — run 1
+
+- Best distance: 0.5588 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_givens_mill.md, guide_kestrelford.md, guide_walking.md
+
+```
+Based on the "Difficult" section of the document, the three least approachable towns from an accessibility standpoint are Kestrelford, Halden Bay, and Corry Vale (along with Elder Ness, which is also listed in that category). 
+
+Source: `guide_accessibility.md`
+```
 
 ## Verdicts
 
@@ -251,13 +309,13 @@ I removed the parts that were overly verbose.
 
      Milestone 2. -->
 
-| # | Criterion | Verdict | How I decided |
-|---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | each text contains an answer that shows up in expected.
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | all the answers can be traced back to their source documents
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | irrelevant questions are denied, rather than guessed at
+| 4. Chunks reference towns  | 4 of 5 | 5/5 | 5/5 | 5/5 | MET | when sampling chunks, there is a town name inside each chunk
+| 5. Answers don't confuse towns (i.e. no hallucinations or conflating facts) | 5 of 5 | 5/5 | 5/5 | 5/5 | MET | wrong answers are not included with a correct answer.
 
 ## Diagnoses
 
@@ -279,14 +337,27 @@ I removed the parts that were overly verbose.
 
      Milestone 3. -->
 
+None of my runs produced misses. I don't think my targets were set low. 
+I'd refine my criteria #5 to make grading more straightforward.
+
 ## The Improvement
 
 **What I changed:**
 
+**Revised Criteria #5 in unit 2:** For all 5 of my test questions, every fact in the
+> answer passes two checks:
+> 1. **Right town.** If the fact is about a town, the cited file says it about that
+>    same town, not a different one.
+> 2. **Right file.** I can find the fact by opening a file the answer cites
+>    for it and searching. Any one of the listed files counts.
+
 **Why I picked it:**
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
+**Why revised:** The original says "the town I actually asked about," but
+none of my five questions names a town. The check now
+compares the town in the answer with the town the source file gives that
+fact to. I also wrote down how to score answers that list their sources. 
+
 
 ### Run Log — After
 
